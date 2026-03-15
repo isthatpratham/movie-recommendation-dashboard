@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+dataset/*.csv
+!dataset/clean_movies.csv
+!dataset/clean_ratings.csv

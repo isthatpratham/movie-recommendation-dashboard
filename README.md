@@ -1,125 +1,109 @@
 # Movie Rating Analytics Dashboard
 
-The Movie Rating Analytics Dashboard is a comprehensive web-based platform designed to analyze and visualize the MovieLens 100K dataset. This project processes large-scale movie rating data to extract meaningful patterns in user behavior, genre popularity, and cinematic trends. By leveraging a modern data stack, it provides an interactive experience for exploring movie insights through professional-grade visualizations and real-time metric tracking.
+A web-based analytics platform for exploring the **MovieLens 100K** dataset. It provides interactive visualizations, cross-filtering, and drill-downs so you can analyze movie ratings, genre trends, and user behavior in one place.
 
 ## Features
 
-*   **Interactive Analytics Dashboard:** Real-time data visualization of movie trends.
-*   **8 Specialized Visualizations:** Custom Chart.js implementations for diverse data perspectives.
-*   **KPI Overview Metrics:** Quick-glance cards for total movies, ratings, users, and average score.
-*   **Movie Search Quick Insights:** Dynamic search panel providing deep-dives into specific movie performance.
-*   **Genre Popularity Analysis:** Distribution of ratings and engagement across different genres.
-*   **Rating Distribution Visualization:** Statistical breakdown of how users are scoring content.
-*   **User Activity Insights:** Tracking the most engaged contributors in the dataset.
-*   **Temporal Analysis:** Visualization of movie release volume and rating frequency over time.
-*   **Dark Cinema Theme:** A high-contrast, professional UI designed for data clarity and aesthetic appeal.
+### Core analytics
+* **KPI overview** — Total movies, total ratings, average rating, total users (with optional trend text).
+* **Key insights** — Auto-generated highlights (peak production year, top genre, most-rated movie, user activity).
+* **Movie quick insight** — Search by title to see a single movie’s rating summary and metadata.
 
-## Dashboard Preview
+### Interactive dashboard
+* **Cross-filtering** — Click a genre (treemap), a rating level (1–5 bar), or a year (movies-per-year chart) to filter all other charts. Reset with one button.
+* **Movie detail panel** — Click a movie in Top Rated, Most Rated, or the bubble chart to open a side panel with title, year, average rating, total ratings, genres, and a mini rating distribution (and ratings over time) for that movie.
+* **Bubble chart quadrants** — Movie Popularity vs Rating chart includes reference lines (average rating, average count) and labels: **Blockbusters**, **Hidden Gems**, **Overhyped**, **Unnoticed**.
+* **Smart insight callouts** — Short auto-generated insights under major charts (e.g. peak year, highest-rated movie, top genre); they update when filters change.
+* **Richer tooltips** — Consistent tooltips across charts (Movie, Year, Average Rating, Total Ratings, Genres where applicable).
+* **Dataset info panel** — Info icon next to the title opens a popup with dataset name, total movies, total ratings, total users.
+* **Per-chart export** — Each chart card offers **Download PNG** and **Download CSV** (where data is available).
+* **Responsive layout** — Desktop: two charts per row; tablet: asymmetric grid; mobile: single column. Charts resize with the viewport.
+* **Theme toggle** — Dark (default) and light theme with persistence.
 
-![Dashboard Screenshot](./assets/dashboard.png)
+### Visualizations
+* **Top Rated Movies** — Horizontal bar by average rating; click bar for movie detail.
+* **Most Rated Movies** — Lollipop chart by total ratings; click for movie detail.
+* **Movies Released Per Year** — Area chart; click a point to filter by year.
+* **Movie Age vs Rating** — Scatter: release year vs average rating.
+* **Genre Popularity** — Treemap (genre blocks); click a genre to filter.
+* **Average Rating by Genre** — Horizontal bar, low-to-high color gradient.
+* **Ratings per Genre (Engagement)** — Total ratings per genre.
+* **Rating Distribution** — Bar chart 1★–5★; click a bar to filter by rating.
+* **User Rating Activity** — Histogram of users by activity bucket (1–10, 10–50, 50–100, 100+ ratings).
+* **Genre vs Rating Heatmap** — Rows: genres; columns: 1–5★; color = count.
+* **Movie Popularity vs Rating** — Bubble chart (X = total ratings, Y = avg rating) with quadrant labels; click bubble for movie detail.
 
-*The screenshot demonstrates the analytics dashboard with integrated Chart.js visualizations and dynamic KPI overview cards.*
-
-## Project Architecture
-
-The application follows a modular data processing and presentation pipeline:
-
-1.  **Data Layer:** Raw MovieLens 100K dataset is processed via high-performance cleaning scripts.
-2.  **Storage Layer:** Cleaned data is structured and loaded into a MySQL database for efficient querying.
-3.  **Analytics Layer:** A Python-based analytics engine performs complex aggregations and statistical calculations using Pandas.
-4.  **API Layer:** A Flask-based REST API manages data transmission between the backend engine and the interface.
-5.  **Presentation Layer:** A responsive web interface built with Bootstrap and Chart.js renders data into an interactive dashboard.
-
-## Project Structure
+## Project structure
 
 ```text
 movie/
 ├── analytics/
-│   ├── analytics_engine.py      # Core logic for data aggregation
-│   └── data_cleaning.py         # Scripts for filtering and normalizing raw data
-├── database/
-│   ├── fast_loader.py           # Optimized MySQL data insertion
-│   └── load_data.py             # Standard database initialization
+│   ├── analytics_engine.py   # Aggregations and stats (uses CSV data)
+│   └── data_cleaning.py      # Clean/normalize raw MovieLens data
 ├── dataset/
-│   ├── clean_movies.csv         # Processed movie metadata
-│   └── clean_ratings.csv        # Processed user rating data
+│   ├── clean_movies.csv      # Processed movie metadata
+│   └── clean_ratings.csv     # Processed ratings
 ├── static/
-│   ├── css/                     # Custom cinema-themed styling
-│   ├── js/                      # Chart.js logic and API handling
-│   └── images/                  # Assets for UI components
+│   ├── css/style.css         # Dashboard and chart styling
+│   └── js/dashboard.js       # Chart.js logic, filters, export, panels
 ├── templates/
-│   └── dashboard.html           # Main dashboard interface
-└── app.py                       # Flask application entry point
+│   └── dashboard.html        # Main dashboard markup
+├── schema/                   # Optional MySQL schema (if using DB)
+├── database/                 # Optional DB loaders
+└── app.py                    # Flask app and API routes
 ```
 
-## Dashboard Visualizations
+## Installation & setup
 
-The dashboard includes the following analytical charts:
+1. **Clone the repository**
+   ```bash
+   git clone <repo-link>
+   cd movie
+   ```
 
-*   **Top Rated Movies:** Highlights the highest-quality content by average score.
-*   **Most Rated Movies:** Visualizes the most popular titles by total engagement volume.
-*   **Genre Popularity:** A proportional breakdown of genre representation.
-*   **Rating Distribution:** Shows the frequency of scores from 1 to 5.
-*   **Ratings Over Time:** Tracks the growth and trends of user feedback.
-*   **Top Users:** identifies the most prolific reviewers in the system.
-*   **Average Rating by Genre:** Compares the perceived quality across different categories.
-*   **Movies Released Per Year:** Illustrates historical cinema production trends.
+2. **Install dependencies**
+   ```bash
+   pip install flask pandas
+   ```
+   Optional (if you use MySQL or schema): `mysql-connector-python`
 
-## Installation & Setup
+3. **Prepare data**  
+   The dashboard reads from the CSV files in `dataset/`. If you don’t have them yet:
+   ```bash
+   python analytics/data_cleaning.py
+   ```
+   This produces (or expects) `dataset/clean_movies.csv` and `dataset/clean_ratings.csv` in the format used by the analytics engine.
 
-Follow these steps to deploy the project locally:
+4. **Run the app**
+   ```bash
+   python app.py
+   ```
 
-1.  **Clone the repository**
-    ```bash
-    git clone <repo-link>
-    ```
+5. **Open the dashboard**  
+   In your browser go to: `http://127.0.0.1:5000`
 
-2.  **Install dependencies**
-    ```bash
-    pip install flask pandas matplotlib seaborn mysql-connector-python
-    ```
-
-3.  **Initialize MySQL**
-    *   Start MySQL using XAMPP or your preferred local server.
-    *   Create a new database named `movie_analytics`.
-
-4.  **Prepare and Load Data**
-    *   Run the cleaning script:
-        ```bash
-        python analytics/data_cleaning.py
-        ```
-    *   Load the data into the database:
-        ```bash
-        python database/fast_loader.py
-        ```
-
-5.  **Start the Flask Server**
-    ```bash
-    python app.py
-    ```
-
-6.  **Access the Dashboard**
-    Open your browser and navigate to `http://127.0.0.1:5000`.
+The analytics engine loads data from the CSV files in memory; no database is required for the dashboard to run. If you use the optional MySQL setup (e.g. `schema/movie_analytics.sql`, `database/load_clean_data.py`), configure `DB_CONFIG` in `analytics/analytics_engine.py` as needed.
 
 ## Dataset
 
-This project utilizes the **MovieLens 100K Dataset** provided by GroupLens Research. The data consists of 100,000 ratings from 943 users on 1,682 movies.
+**MovieLens 100K** (GroupLens Research): 100,000 ratings from 943 users on 1,682 movies.
 
-Source: [GroupLens MovieLens Dataset](https://grouplens.org/datasets/movielens/100k/)
+Source: [GroupLens MovieLens 100K](https://grouplens.org/datasets/movielens/100k/)
 
-## Future Improvements
+## Tech stack
 
-*   **Recommendation System:** Implementation of collaborative and content-based filtering algorithms.
-*   **Advanced Filtering:** Multi-dimensional sorting and filtering by popularity, date, or specific demographics.
-*   **Movie Poster Integration:** Connection to external APIs (e.g., TMDB) to fetch and display movie artwork.
-*   **Real-time Analytics:** WebSocket integration for live data updates and streaming analytics.
+* **Backend:** Flask, Pandas  
+* **Frontend:** HTML/CSS/JS, Bootstrap 5, Chart.js 4  
+* **Data:** CSV (default); optional MySQL
+
+## Possible future improvements
+
+* Recommendation models (collaborative or content-based).
+* Movie poster/artwork via external APIs (e.g. TMDB).
+* Real-time or streaming analytics (e.g. WebSockets).
+* More export formats (PDF report, full-dashboard CSV).
 
 ## Author
 
-**Ammiyo Paul**
-<br> MCA Student
-<br> Data Analytics / Cybersecurity Enthusiast
-
-## Co-Author
-
-Co-authored-by: @isthatpratham <premdebnath08@gmail.com>   
+**Ammiyo Paul**  
+MCA student · Data analytics enthusiast
